@@ -36,7 +36,9 @@
 
       </div>
        <!--カラーピッカー-->
-      <div class="color-picker"></div>
+      <div class="color-picker">
+        <input type="color">
+      </div>
         />
         <!--レイヤー選択ボタン-->
         <button class="l" @click="plusLayer"><h1>+</h1></button>
@@ -104,8 +106,8 @@
     </div>
     
 </template>
-
 <script setup lang="ts">
+
 //ref()・reactive()は、基本的に単一の値（基本データ型やオブジェクトなど）をリアクティブな値として定義
 import { onMounted, reactive, ref, defineComponent } from "vue";
 //1105"type"を追加↓
@@ -122,6 +124,12 @@ import {
   getDocs,
   query,
 } from "firebase/firestore";
+import { createUserWithEmailAndPassword, sendEmailVerification, 
+  signOut, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+  import { getAuth } from "firebase/auth";
+  const auth = getAuth();
+  //ユーザー取得
+
 /*
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
@@ -187,15 +195,39 @@ let dragEndHandler = null as ((event: Event) => void) | null;
 const store = getFirestore();
 
 //パス定義 個別ID //defineProps 親コンポーネントから子コンポーネントに受け渡し？
-const props = defineProps<{ boardId: string }>(); //vueの機能によりpropsをstringとして取得
+const props = defineProps<{ 
+  boardId: string,
+  userId : string }>(); //vueの機能によりpropsをstringとして取得
+
+//const uid = defineProps<{userId : string }>(); //vueの機能によりpropsをstringとして取得
+//console.log(uid)
+//let uid = {userId:"aaa"};
+const admin = async () =>{
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // login state
+            //userIDを取り出す↓
+            console.log(user);
+        } else {
+            // ログインしてない
+        }
+    })
+};
+admin;
+/*
+const aaa = defineProps<{
+   userId : string 
+  }>(); //vueの機能によりpropsをstringとして取得
+console.log(aaa.userId);
+*/
 const layersCollectionRef = collection(
   store,
-  `rooms/${props.boardId}/layers`
+  `users/${props.userId}/rooms/${props.boardId}/layers`
 )
 
 //このroomのelementsにrefを設定
 let elementsCollectionRef = collection(
-  store,`rooms/${props.boardId}/layers/${state.selectedLayer}/elements`
+  store,`users/${props.userId}/rooms/${props.boardId}/layers/${state.selectedLayer}/elements`
 );
 onSna();
 //変更を加えた時に呼び出されるonSnapshot
@@ -267,7 +299,7 @@ const plusLayer = async() => {
     state.selectedLayer = newLayerId.id;
     elementsCollectionRef = collection(
     store,
-    `rooms/${props.boardId}/layers/${state.selectedLayer}/elements`
+    `users/${props.userId}/rooms/${props.boardId}/layers/${state.selectedLayer}/elements`
     );
     //NewLayer?.setAttribute("id",newLayerId.id);
   //全レイヤーの配列にIDを追加
@@ -360,7 +392,7 @@ const onClickLayer = async(layer: string) => {
   //let layerCollectionRef = collection(store,`rooms/${props.boardId}/layers/${layer}/elements`);
   state.selectedLayer = layer;
   elementsCollectionRef = collection(
-  store,`rooms/${props.boardId}/layers/${state.selectedLayer}/elements`
+  store,`users/${props.userId}/rooms/${props.boardId}/layers/${state.selectedLayer}/elements`
   );
   onSna();
 }
@@ -393,19 +425,17 @@ const noScroll = (e: Event)=> {
 
 <!--------------------------------- css --------------------------------------------->
 <style scoped>
+
 body{
   margin:0;
-  height: 100vh;
+  height: 100%;
   background-color: azure;
   height: 100%;
 }
 .component-container {
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-rows: 50px 1fr;
-
-  overflow: hidden;
+  background-color:black;
 }
 
 #whiteLayer{
@@ -432,8 +462,8 @@ body{
 
 
 .tools{
-  width: 300px;
-  height:100dvh;
+  width: 20%;
+  height:100%;
   background-color:rgb(202, 217, 216);
   display:flex; /*横並び*/
   /*右寄せ3行*/
@@ -446,8 +476,8 @@ body{
   z-index:10;
 }
 .tool1 {
-  width: 40px;
-  height:100dvh;
+  width: 18%;
+  height:100%;
   background-color: rgb(255, 252, 241);
 
   text-align:center; /*ボタンを真ん中にする*/   
@@ -466,7 +496,7 @@ body{
 }
 .tool2{
   width: 300px;
-  height:100dvh;
+  height:100%;
   background-color: rgb(214, 228, 227);
 }
 
@@ -491,14 +521,6 @@ body{
   width        : 50px;
   height       : 50px;
   background   : rgb(255, 255, 255);
-}
-.header > button:hover {
-  opacity: 0.5;
-}
-.header > button[selected="true"] {
-  border-width: 5px;
-  border-color: lightgray;
-  border-style: solid;
 }
 </style>
 

@@ -4,12 +4,21 @@
   <!--ここに他のコンポーネントやhtmlを表示-->
 <template>
   <div class="root">
-    <!---->
+          <!--
+    <header>
+      <list>
+        <li>home</li>
+      </list>
+    </header>
+  -->
     <router-view />
+    
+    <!--
     <footer>
       White-Board -
       <a href="/">Top page</a>
     </footer>
+    -->
   </div>
 </template>
 
@@ -17,8 +26,6 @@
 <style scoped>
 .root {
   height: 100%;
-  display: grid;
-  grid-template-rows: 1fr 24px;
 }
 footer {
   background-color: dimgray;
@@ -29,4 +36,5 @@ footer {
 footer a {
   color: white;
 }
+
 </style>

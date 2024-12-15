@@ -12,5 +12,13 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)) //srcディレクトリを@と記述することができる。
     }
-  }
-})
+  },
+  define: {
+    "window.ENGINE_DATA": JSON.stringify({
+      scenes: [],
+      parameter: null,
+      frame: 0,
+      id: 0,
+    }),
+  },
+});
