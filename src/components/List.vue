@@ -4,15 +4,27 @@
     <div class="s">
       <button class="plusRoom" @click="plusRoom"><h1>+</h1></button>
     </div>
+    <button @click="enterEntrance" variant="primary">
+                ←
+        </button>
+
     <div class="past">
+
     <button class="pastList"
-      v-for="room in state.roomList"
-      :key="room"
-      :title="room"
-      :selected="room === selectedRoom"
-      @click="enterRoom(room)"
-    >{{ room }}</button>
-     </div>
+        v-for="room in state.roomList"
+        :key="room"
+        :title="room"
+        :selected="room === selectedRoom"
+        @click="enterRoom(room)"
+      >{{ room }}</button>
+
+      <div class="pastTime"
+      v-for="time in state.times"
+        :key="time"
+        :title="time"
+      >{{ time }}</div>
+    </div>
+     
   
    <!-- ユーザーネーム登録初回のみ表示-->
   </div>
@@ -29,11 +41,24 @@ import {
   onSnapshot,
   getDocs,
   query,
+  firestore,
+  Timestamp,
 } from "firebase/firestore";
 import router from "../router/router";
 import { onMounted, reactive, ref, defineComponent } from "vue";
 const store = getFirestore();
- 
+
+//timestamp
+//console.log(Timestamp.now());
+//今の時間
+//const time = Timestamp.now();
+//経過日数
+//console.log(Timestamp.fromDate(new Date("December 10, 2024")));
+//表示
+//console.log(time.toDate());
+const enterEntrance = async () => {
+router.push({ path: `/` }); //画面遷移 board.vue/生成されたid
+};
 //ユーザー取得
 const uid = defineProps<{
    userId : string 
@@ -48,32 +73,43 @@ const enterRoom = async (room: string) => {
   router.push({ path: `/board/${selectedRoom}` }); //画面遷移 board.vue/生成されたid
 };
 //新しいルームを作って飛ぶ
-
-
 const plusRoom = async () => {
-  const collectionRef = collection(store, `users/${uid.userId}/rooms`); //コレクションのrefを設定
-  const result = await addDoc(collectionRef, {}); //ドキュメント(id)をroomに追加
-  //router.push({ path: `/board/${result.id}` }); //画面遷移 board.vue/生成されたid
+  const timeSt = Timestamp.now();
+  const collectionRef = collection(store, `users/${uid.userId}/rooms`); 
+  const result = await addDoc(collectionRef, {timestamp: timeSt});
+  //router.push({ path: `/board/${result.id}` });
+  onSna();
+  console.log(state.roomList)
+  //timeStampを追加
+  
   };
 
 //uidから過去のルーム一覧のid取得
 const roomsCollectionRef = collection(store, `users/${uid.userId}/rooms`)
 const state = reactive({
   roomList:[] as string[],
+  times : [] as num[],
 });
-//onclickRoomの飛ぶパスに埋め込む
+//roomListと時間を取得
+console.log("a");
 function onSna(){
 onSnapshot(roomsCollectionRef, (querySnapshot) => {
-  console.log("ons");
   state.roomList = [];
+  state.times = [];
+  console.log("ons");
   //データを取得
   querySnapshot.docs.map((doc) => {
+    const data = doc.data();
     const roomId = doc.id;
     state.roomList.unshift(roomId);
+    const time = data.timestamp
+    state.times.unshift(time);
   });
 });
 };
 onSna();
+
+
 </script>
 <style scoped>
 .component-container{

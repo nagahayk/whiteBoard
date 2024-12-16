@@ -42,8 +42,10 @@ import {
   onSnapshot,
   getDocs,
   query,
+  Timestamp,
 } from "firebase/firestore";
-import router from "../router/router";
+import { useRouter } from 'vue-router';
+const router = useRouter();
 //user管理import///////////////////////////////////////////////////////////////////////
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -72,10 +74,14 @@ const enterNewBoard = async () => {
   const usersCollectionRef = collection(store, "users");
   await addDoc(usersCollectionRef, {uid: uid });
 
-//firestoreパス rooms
-  const collectionRef = collection(store, `users/${uid}/rooms`);
-  const result = await addDoc(collectionRef, {}); //ドキュメント(id)をroomに追加
-  router.push({ path: `/board/${result.id}` }); //画面遷移 board.vue/生成されたid
+  //firestoreパス rooms
+    const collectionRef = collection(store, `users/${uid}/rooms`);
+    const result = await addDoc(collectionRef, {}); //ドキュメント(id)をroomに追加
+    router.push({ path: `/board/${result.id}` }); //画面遷移 board.vue/生成されたid
+  
+    //timeStampを追加
+    const timeSt = Timestamp.now();
+    await addDoc(collectionRef, {timestamp: timeSt});
 };
 //登録ボタン
 const sub = async () =>{

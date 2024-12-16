@@ -3,6 +3,12 @@
     <div class="tools">
       <!--ボタン-->
       <div class="tool1">
+        <button @click="enterListPage" variant="primary">
+                確認
+        </button>
+        <button @click="enterEntrance" variant="primary">
+                ←
+        </button>
       <button
        :selected="state.selectedMode === 'drawLine'"
         @click="state.selectedMode = 'drawLine'"
@@ -112,7 +118,8 @@
 import { onMounted, reactive, ref, defineComponent } from "vue";
 //1105"type"を追加↓
 import type { DrawElement, DrawPoint } from "../scripts/types";
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 //firestoreからデータベースについての情報をインポート
 import {
   addDoc,
@@ -128,7 +135,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification,
   signOut, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
   import { getAuth } from "firebase/auth";
   const auth = getAuth();
-  //ユーザー取得
+
 
 /*
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -213,7 +220,18 @@ const admin = async () =>{
         }
     })
 };
-admin;
+
+console.log(props.boardId);
+//定義 過去ルームリストページに飛ぶ
+const enterListPage = async () => {
+  console.log(props.userId);
+router.push({ path: `/list/${props.userId}` }); //画面遷移 board.vue/生成されたid
+};
+const enterEntrance = async () => {
+router.push({ path: `/` }); //画面遷移 board.vue/生成されたid
+};
+
+
 /*
 const aaa = defineProps<{
    userId : string 

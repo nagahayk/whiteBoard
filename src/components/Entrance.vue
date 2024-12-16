@@ -1,14 +1,14 @@
 <script setup lang="ts">
 
-import router from "../router/router";
-
+//import router from "../router/router";
+import { useRouter } from 'vue-router';
+const router = useRouter();
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 /*
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 */
 const store = getFirestore();
-
 //ユーザー取得
 const uid = defineProps<{
    userId : string 
@@ -33,7 +33,7 @@ const submit = async () => {
 const login = async () => {
   router.push({ path: `/login` }); //画面遷移 board.vue/生成されたid
 };
-
+console.log("a");
 
 </script>
 

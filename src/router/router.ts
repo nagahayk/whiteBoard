@@ -27,18 +27,14 @@ const routes = [
     component: List,
     props: true,
   },
-  {
-    path: "/user/board/:boardId",
-    component: Board,
-    props: true,
-  },
+
   {
     path: "/board/:boardId",
     component: Board,
     props: true,
   },
 ];
-
+console.log("router");
 const router = createRouter({
   history: createWebHashHistory(),
   routes,

@@ -28,9 +28,9 @@
 <script setup>
 import { defineComponent, ref } from "vue";
 
-
 //user管理import///////////////////////////////////////////////////////////////////////
-import router from "../router/router";
+import { useRouter } from 'vue-router';
+const router = useRouter();
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
